@@ -36,7 +36,6 @@ class UserViewSet(viewsets.ModelViewSet):
     def login(self, request):
         user = authenticate(
             request, username=request.POST['email'], password=request.POST['password'])
-        print(user)
         if user is not None:
             login(request, user)
             return Response({"message": "You are logged in"}, status=status.HTTP_200_OK)

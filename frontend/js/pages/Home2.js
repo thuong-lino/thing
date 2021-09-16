@@ -1,19 +1,29 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Button from 'react-bootstrap/Button';
 import { connect } from 'react-redux';
 
 import DjangoImgSrc from '../../assets/images/django-logo-negative.png';
 import { creators } from '../store/rest_check';
 
+const propTypes = {
+  result: PropTypes.string,
+  fetchRestCheck: PropTypes.func,
+};
+
 class Home2 extends Component {
   constructor(props) {
     super(props);
-    this.state={}
-    this.props.fetchRestCheck()
+    this.state = {};
   }
 
-  render(){
-    console.log(this.props.result)
+  componentDidMount() {
+    const { fetchRestCheck } = this.props;
+    fetchRestCheck();
+  }
+
+  render() {
+    const { result } = this.props;
+    console.log(result);
     return (
       <>
         <div id="django-background">
@@ -27,21 +37,22 @@ class Home2 extends Component {
           </div>
           <img alt="Django Negative Logo" src={DjangoImgSrc} />
         </div>
-        <div>{this.props.result}</div>
-
+        <div>{result}</div>
       </>
     );
   }
 }
+Home2.propTypes = propTypes;
 const mapStateToProps = (state) => {
-return {
-  result : state.restCheck.result
-}
-}
-const mapDispatchToProps = dispatch => {
   return {
-    fetchRestCheck: () => { dispatch(creators.fetchRestCheck())}
-  }
-
-}
-export default connect(mapStateToProps, mapDispatchToProps)(Home2)
+    result: state.restCheck.result,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetchRestCheck: () => {
+      dispatch(creators.fetchRestCheck());
+    },
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Home2);

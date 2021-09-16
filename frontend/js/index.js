@@ -4,7 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import '../sass/style.scss';
-
+import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './App';
 
 Sentry.init({
