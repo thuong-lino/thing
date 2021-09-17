@@ -1,26 +1,81 @@
 import React, { Component } from 'react';
-import { Navbar, Container, Nav } from 'react-bootstrap';
-import { Link, withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { creators } from '../store/auth';
+import { withRouter, Redirect, Link } from 'react-router-dom';
+
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { styled } from '@mui/styles';
+
+const MyAppBar = styled(AppBar)({
+  //background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+  background: 'linear-gradient(to right bottom, #0c7142, #007f5e, #008c7a, #009a95, #04a6af)',
+  border: 0,
+  borderRadius: 3,
+  boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+  color: 'white',
+  padding: '0 30px',
+});
 class Layout extends Component {
+  constructor(props) {
+    super(props);
+    this.logout = this.logout.bind(this);
+  }
+  logout() {
+    this.props.authLogout();
+  }
   render() {
+    const { loggedInUser, isAuthenticated } = this.props;
     return (
       <>
-        <Navbar bg="dark" variant="dark" fixed="top">
-          <Container>
-            <Link to="/">
-              <Navbar.Brand>Brand</Navbar.Brand>
-            </Link>
-            <Nav className="me-auto">
-              <Nav.Link href="/">Home</Nav.Link>
-              <Nav.Link href="#features">Features</Nav.Link>
-              <Nav.Link href="#pricing">Pricing</Nav.Link>
-            </Nav>
-          </Container>
-        </Navbar>
-        <Container>{this.props.children}</Container>
+        <Box sx={{ flexGrow: 1 }}>
+          <MyAppBar position="sticky">
+            <Toolbar>
+              <IconButton
+                size="large"
+                edge="start"
+                color="inherit"
+                aria-label="menu"
+                sx={{ mr: 2 }}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Typography variant="h6" component="div" to="/" sx={{ flexGrow: 1 }}>
+                Home
+              </Typography>
+
+              {isAuthenticated ? (
+                <Button color="inherit" onClick={this.logout}>
+                  Hi {isAuthenticated} <LogoutIcon /> Logout
+                </Button>
+              ) : (
+                <Button color="inherit" component={Link} to="/login/">
+                  <LoginIcon /> Login
+                </Button>
+              )}
+            </Toolbar>
+          </MyAppBar>
+          {this.props.children}
+        </Box>
       </>
     );
   }
 }
-
-export default withRouter(Layout);
+const mapStateToProps = (state) => {
+  return {
+    isAuthenticated: state.auth.user,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    authLogout: () => dispatch(creators.authLogout()),
+  };
+};
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Layout));

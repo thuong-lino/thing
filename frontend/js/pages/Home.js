@@ -14,7 +14,6 @@ const Home = () => {
   }, [dispatch]);
 
   const [showBugComponent, setShowBugComponent] = useState(false);
-  console.log(restCheck.result)
   return (
     <>
       <div id="django-background">

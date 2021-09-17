@@ -10,16 +10,35 @@ import configureStore from './store';
 import SentryBoundary from './utils/SentryBoundary';
 
 const store = configureStore({});
-const App = () => (
-  <SentryBoundary>
-    <Provider store={store}>
-      <Router>
-        <Layout>
-          <BaseRouter />
-        </Layout>
-      </Router>
-    </Provider>
-  </SentryBoundary>
-);
 
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loggedInUser: null,
+    };
+  }
+
+  componentDidMount() {
+    const loggedInUser = localStorage.getItem('user');
+    if (loggedInUser) {
+      this.setState({ loggedInUser });
+    }
+  }
+  render() {
+    const { loggedInUser } = this.state;
+
+    return (
+      <SentryBoundary>
+        <Provider store={store}>
+          <Router>
+            <Layout loggedInUser={loggedInUser}>
+              <BaseRouter />
+            </Layout>
+          </Router>
+        </Provider>
+      </SentryBoundary>
+    );
+  }
+}
 export default hot(App);
