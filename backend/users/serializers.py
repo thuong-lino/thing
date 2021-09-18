@@ -3,6 +3,7 @@ from rest_auth.registration.serializers import RegisterSerializer
 from allauth.account.adapter import get_adapter
 from .models import User
 from rest_framework.authtoken.models import Token
+from django.db import transaction
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -26,6 +27,7 @@ class CustomRegisterSerializer(RegisterSerializer):
             'is_teacher': self.validated_data.get('is_teacher', ''),
         }
 
+    @transaction.atomic  # roll back the save operation in case of errors
     def save(self, request):
         adapter = get_adapter()
         user = adapter.new_user(request)

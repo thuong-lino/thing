@@ -31,8 +31,11 @@ class Layout extends Component {
   logout() {
     this.props.authLogout();
   }
+  componentDidMount() {
+    this.props.onTryAutoSignup();
+  }
   render() {
-    const { loggedInUser, isAuthenticated } = this.props;
+    const { isAuthenticated } = this.props;
     return (
       <>
         <Box sx={{ flexGrow: 1 }}>
@@ -50,10 +53,9 @@ class Layout extends Component {
               <Typography variant="h6" component="div" to="/" sx={{ flexGrow: 1 }}>
                 Home
               </Typography>
-
               {isAuthenticated ? (
                 <Button color="inherit" onClick={this.logout}>
-                  Hi {isAuthenticated} <LogoutIcon /> Logout
+                  <LogoutIcon /> Logout
                 </Button>
               ) : (
                 <Button color="inherit" component={Link} to="/login/">
@@ -70,12 +72,13 @@ class Layout extends Component {
 }
 const mapStateToProps = (state) => {
   return {
-    isAuthenticated: state.auth.user,
+    isAuthenticated: state.auth.token !== null,
   };
 };
 const mapDispatchToProps = (dispatch) => {
   return {
     authLogout: () => dispatch(creators.authLogout()),
+    onTryAutoSignup: () => dispatch(creators.authCheckState()),
   };
 };
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Layout));

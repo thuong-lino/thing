@@ -46,8 +46,8 @@ class Login extends Component {
     authLogin(data.get('email'), data.get('password'));
   }
   render() {
-    const { user, error, loading } = this.props;
-    if (user) {
+    const { token, error, loading } = this.props;
+    if (token) {
       return <Redirect to="/" />;
     }
     return (
@@ -118,7 +118,7 @@ class Login extends Component {
 }
 const mapStateToProps = (state) => {
   return {
-    user: state.auth.user,
+    token: state.auth.token,
     loading: state.auth.user,
     error: state.auth.error,
   };

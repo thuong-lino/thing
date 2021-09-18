@@ -141,7 +141,7 @@ REST_AUTH_SERIALIZERS = {
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'users.serializers.CustomRegisterSerializer',
 }
-
+AUTH_USER_MODEL = 'users.User'
 # Webpack
 WEBPACK_LOADER = {
     "DEFAULT": {
