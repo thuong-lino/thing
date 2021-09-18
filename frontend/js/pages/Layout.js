@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { creators } from '../store/auth';
+import { authSuccess } from '../store/auth';
 import { withRouter, Redirect, Link } from 'react-router-dom';
 
 import AppBar from '@mui/material/AppBar';
@@ -12,6 +13,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { styled } from '@mui/styles';
 
 const MyAppBar = styled(AppBar)({
@@ -32,7 +34,18 @@ class Layout extends Component {
     this.props.authLogout();
   }
   componentDidMount() {
-    this.props.onTryAutoSignup();
+    //console.log(this.props.onTryAutoSignup());
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user === undefined || user === null) {
+      this.props.authLogout();
+    } else {
+      const expirationDate = new Date(user.expirationDate);
+      if (expirationDate <= new Date()) {
+        this.props.authLogout();
+      } else {
+        this.props.authSuccess(user);
+      }
+    }
   }
   render() {
     const { isAuthenticated } = this.props;
@@ -50,17 +63,22 @@ class Layout extends Component {
               >
                 <MenuIcon />
               </IconButton>
-              <Typography variant="h6" component="div" to="/" sx={{ flexGrow: 1 }}>
-                Home
+              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                Menu
               </Typography>
               {isAuthenticated ? (
                 <Button color="inherit" onClick={this.logout}>
                   <LogoutIcon /> Logout
                 </Button>
               ) : (
-                <Button color="inherit" component={Link} to="/login/">
-                  <LoginIcon /> Login
-                </Button>
+                <React.Fragment>
+                  <Button color="inherit" component={Link} to="/login/">
+                    <LoginIcon /> Login
+                  </Button>
+                  <Button color="inherit" component={Link} to="/signup/">
+                    <VpnKeyIcon /> Signup
+                  </Button>
+                </React.Fragment>
               )}
             </Toolbar>
           </MyAppBar>
@@ -78,7 +96,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     authLogout: () => dispatch(creators.authLogout()),
-    onTryAutoSignup: () => dispatch(creators.authCheckState()),
+    authSuccess: (user) => dispatch(authSuccess(user)),
   };
 };
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Layout));

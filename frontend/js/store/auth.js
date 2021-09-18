@@ -1,3 +1,4 @@
+import { AodTwoTone } from '@mui/icons-material';
 import api from './api';
 import { updateObject } from './utils';
 
@@ -8,7 +9,13 @@ const types = {
   LOGIN_SUCCESS: 'LOGIN_SUCCESS',
   LOGIN_FAIL: 'LOGIN_FAIL',
 
+  SIGNUP_START: 'SIGNUP_START',
+  SIGNUP_SUCCESS: 'SIGNUP_SUCCESS',
+  SIGNUP_FAIL: 'SIGNUP_FAIL',
+
   LOGOUT_SUCCESS: 'LOGOUT_SUCCESS',
+  AUTH_CHECK_STATE: 'AUTH_CHECK_STATE',
+  AUTO_SIGN_IN: 'AUTO_SIGN_IN',
 };
 //actions
 const authStart = () => {
@@ -17,7 +24,7 @@ const authStart = () => {
   };
 };
 
-const authSuccess = (user) => {
+export const authSuccess = (user) => {
   return {
     type: types.LOGIN_SUCCESS,
     user,
@@ -34,13 +41,6 @@ const logout = () => {
   localStorage.removeItem('user');
   return {
     type: types.LOGOUT_SUCCESS,
-  };
-};
-const checkAuthTimeout = (expirationTime) => {
-  return (dispatch) => {
-    setTimeout(() => {
-      dispatch(logout());
-    }, expirationTime * 1000);
   };
 };
 const authLogin = (email, password) => {
@@ -63,27 +63,41 @@ const authLogin = (email, password) => {
     }
   };
 };
-const authCheckState = () => {
-  return (dispatch) => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user === undefined || user === null) {
-      dispatch(authLogout());
-    } else {
-      const expirationDate = new Date(user.expirationDate);
-      if (expirationDate <= new Date()) {
-        dispatch(authLogout());
-      } else {
-        dispatch(authSuccess(user));
-        dispatch(checkAuthTimeout((expirationDate.getTime() - new Date().getTime()) / 1000));
-      }
+const authSignup = (email, password1, password2, is_teacher) => {
+  return async (dispatch) => {
+    dispatch({ type: types.SIGNUP_START });
+    try {
+      const user = {
+        email,
+        password1,
+        password2,
+        is_teacher,
+      };
+      const res = await api.post('/rest-auth/registration/', user);
+      const userRes = {
+        token: res.data.key,
+        email,
+        userID: res.data.user,
+        is_teacher,
+        expirationDate: new Date(new Date().getTime() + 36000 * 1000),
+      };
+      console.log(userRes);
+      localStorage.setItem('user', JSON.stringify(userRes));
+      dispatch({
+        type: types.SIGNUP_SUCCESS,
+        user: userRes,
+      });
+    } catch (err) {
+      dispatch({ type: types.SIGNUP_FAIL, err });
     }
   };
 };
+
 // Action creators
 export const creators = {
   authLogin: authLogin,
   authLogout: logout,
-  authCheckState: authCheckState,
+  authSignup: authSignup,
 };
 
 // Reducer
@@ -124,6 +138,7 @@ const authLogout = (state, action) => {
     token: null,
   });
 };
+
 export const auth = (state = initialState, action) => {
   switch (action.type) {
     case types.LOGIN_START:
@@ -132,8 +147,30 @@ export const auth = (state = initialState, action) => {
       return loginSuccess(state, action);
     case types.LOGIN_FAIL:
       return loginFail(state, action);
+
     case types.LOGOUT_SUCCESS:
       return authLogout(state, action);
+
+    case types.SIGNUP_START:
+      return updateObject(state, {
+        error: null,
+        loading: true,
+      });
+    case types.SIGNUP_SUCCESS:
+      return updateObject(state, {
+        loading: false,
+        token: action.user.token,
+        username: action.user.username,
+        is_teacher: action.user.is_teacher,
+        userID: action.user.userID,
+        error: null,
+        loading: false,
+      });
+    case types.SIGNUP_FAIL:
+      return updateObject(state, {
+        loading: false,
+        error: action.err,
+      });
 
     default:
       return state;
