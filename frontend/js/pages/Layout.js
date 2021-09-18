@@ -4,35 +4,18 @@ import { creators } from '../store/auth';
 import { authSuccess } from '../store/auth';
 import { withRouter, Redirect, Link } from 'react-router-dom';
 
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import LoginIcon from '@mui/icons-material/Login';
-import LogoutIcon from '@mui/icons-material/Logout';
-import VpnKeyIcon from '@mui/icons-material/VpnKey';
-import { styled } from '@mui/styles';
+import { Container, Divider, Grid, Header, Image, List, Menu, Segment } from 'semantic-ui-react';
 
-const MyAppBar = styled(AppBar)({
-  //background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-  background: 'linear-gradient(to right bottom, #0c7142, #007f5e, #008c7a, #009a95, #04a6af)',
-  border: 0,
-  borderRadius: 3,
-  boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-  color: 'white',
-  padding: '0 30px',
-});
 class Layout extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      open: true,
+    };
     this.logout = this.logout.bind(this);
+    this.toggleDrawer = this.toggleDrawer.bind(this);
   }
-  logout() {
-    this.props.authLogout();
-  }
+
   componentDidMount() {
     //console.log(this.props.onTryAutoSignup());
     const user = JSON.parse(localStorage.getItem('user'));
@@ -47,50 +30,125 @@ class Layout extends Component {
       }
     }
   }
+  logout() {
+    this.props.authLogout();
+  }
+  toggleDrawer() {
+    this.setState({ open: !this.state.open });
+  }
+
   render() {
-    const { isAuthenticated } = this.props;
+    const { authenticated, is_teacher, userID, authLogin, authLogout } = this.props;
+    const { open } = this.state;
     return (
       <>
-        <Box sx={{ flexGrow: 1 }}>
-          <MyAppBar position="sticky">
-            <Toolbar>
-              <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="menu"
-                sx={{ mr: 2 }}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                Menu
-              </Typography>
-              {isAuthenticated ? (
-                <Button color="inherit" onClick={this.logout}>
-                  <LogoutIcon /> Logout
-                </Button>
-              ) : (
-                <React.Fragment>
-                  <Button color="inherit" component={Link} to="/login/">
-                    <LoginIcon /> Login
-                  </Button>
-                  <Button color="inherit" component={Link} to="/signup/">
-                    <VpnKeyIcon /> Signup
-                  </Button>
-                </React.Fragment>
-              )}
-            </Toolbar>
-          </MyAppBar>
-          {this.props.children}
-        </Box>
+        <Menu inverted>
+          <Container>
+            <Link to="/">
+              <Menu.Item header>Home</Menu.Item>
+            </Link>
+
+            {is_teacher && authenticated ? (
+              <React.Fragment>
+                <Link to={`/profile/${userID}`}>
+                  <Menu.Item header>Profile</Menu.Item>
+                </Link>
+                <Link to={`/create/`}>
+                  <Menu.Item header>Create</Menu.Item>
+                </Link>
+                <Link to={`/edit-assignment/`}>
+                  <Menu.Item header>Assignment</Menu.Item>
+                </Link>
+              </React.Fragment>
+            ) : !is_teacher && authenticated ? (
+              <Link to={`/profile/${userID}`}>
+                <Menu.Item header>Profile</Menu.Item>
+              </Link>
+            ) : null}
+            {authenticated ? (
+              <Menu.Item header onClick={() => authLogout()}>
+                Logout
+              </Menu.Item>
+            ) : (
+              <React.Fragment>
+                <Link to="/login">
+                  <Menu.Item header>Login</Menu.Item>
+                </Link>
+                <Link to="/signup">
+                  <Menu.Item header>Signup</Menu.Item>
+                </Link>
+              </React.Fragment>
+            )}
+          </Container>
+        </Menu>
+        {this.props.children}
+
+        <Segment inverted vertical style={{ margin: '5em 0em 0em', padding: '5em 0em' }}>
+          <Container textAlign="center">
+            <Grid divided inverted stackable>
+              <Grid.Column width={3}>
+                <Header inverted as="h4" content="Group 1" />
+                <List link inverted>
+                  <List.Item as="a">Link One</List.Item>
+                  <List.Item as="a">Link Two</List.Item>
+                  <List.Item as="a">Link Three</List.Item>
+                  <List.Item as="a">Link Four</List.Item>
+                </List>
+              </Grid.Column>
+              <Grid.Column width={3}>
+                <Header inverted as="h4" content="Group 2" />
+                <List link inverted>
+                  <List.Item as="a">Link One</List.Item>
+                  <List.Item as="a">Link Two</List.Item>
+                  <List.Item as="a">Link Three</List.Item>
+                  <List.Item as="a">Link Four</List.Item>
+                </List>
+              </Grid.Column>
+              <Grid.Column width={3}>
+                <Header inverted as="h4" content="Group 3" />
+                <List link inverted>
+                  <List.Item as="a">Link One</List.Item>
+                  <List.Item as="a">Link Two</List.Item>
+                  <List.Item as="a">Link Three</List.Item>
+                  <List.Item as="a">Link Four</List.Item>
+                </List>
+              </Grid.Column>
+              <Grid.Column width={7}>
+                <Header inverted as="h4" content="Footer Header" />
+                <p>
+                  Extra space for a call to action inside the footer that could help re-engage
+                  users.
+                </p>
+              </Grid.Column>
+            </Grid>
+
+            <Divider inverted section />
+            {/* <Image centered size="mini" src="/logo.png" /> */}
+            <List horizontal inverted divided link size="small">
+              <List.Item as="a" href="#">
+                Site Map
+              </List.Item>
+              <List.Item as="a" href="#">
+                Contact Us
+              </List.Item>
+              <List.Item as="a" href="#">
+                Terms and Conditions
+              </List.Item>
+              <List.Item as="a" href="#">
+                Privacy Policy
+              </List.Item>
+            </List>
+          </Container>
+        </Segment>
       </>
     );
   }
 }
 const mapStateToProps = (state) => {
   return {
-    isAuthenticated: state.auth.token !== null,
+    authenticated: state.auth.token !== null,
+    userID: state.auth.userID,
+    is_teacher: state.auth.is_teacher,
   };
 };
 const mapDispatchToProps = (dispatch) => {

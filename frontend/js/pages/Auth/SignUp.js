@@ -1,156 +1,130 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { Button, Form, Grid, Header, Message, Segment } from 'semantic-ui-react';
 import { connect } from 'react-redux';
+import { NavLink, Redirect } from 'react-router-dom';
 import { creators } from '../../store/auth';
-import { Redirect } from 'react-router-dom';
 
-//mui
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-const theme = createTheme();
-class SignUp extends Component {
+class RegistrationForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      is_teacher: '',
+      email: '',
+      password1: '',
+      password2: '',
+      is_teacher: false,
     };
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSelectChange = this.handleSelectChange.bind(this);
   }
 
-  handleSubmit(event) {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    const email = data.get('email');
-    const password1 = data.get('password1');
-    const password2 = data.get('password2');
-    const is_teacher = data.get('user-type');
+  handleSubmit(e) {
+    e.preventDefault();
 
+    const { email, password1, password2, is_teacher } = this.state;
     this.props.signup(email, password1, password2, is_teacher);
   }
+
   handleChange(e) {
-    console.log(e.target.value);
-    this.setState({
-      is_teacher: e.target.value,
-    });
+    this.setState({ [e.target.name]: e.target.value });
   }
+
+  handleSelectChange(e, { value }) {
+    let is_teacher = this.state.is_teacher;
+    if (value === 'student') {
+      is_teacher = false;
+    } else {
+      is_teacher = true;
+    }
+    this.setState({ is_teacher });
+  }
+
   render() {
-    const { is_teacher } = this.state;
+    const { username, email, password1, password2 } = this.state;
+    const { error, loading, token } = this.props;
+    console.log(this.state);
+    if (token) {
+      return <Redirect to="/" />;
+    }
     return (
-      <>
-        <ThemeProvider theme={theme}>
-          <Container component="main" maxWidth="xs">
-            <CssBaseline />
-            <Box
-              sx={{
-                marginTop: 8,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-              }}
-            >
-              <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                <LockOutlinedIcon />
-              </Avatar>
-              <Typography component="h1" variant="h5">
-                Sign up
-              </Typography>
-              <Box component="form" noValidate onSubmit={this.handleSubmit} sx={{ mt: 3 }}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <TextField
-                      required
-                      fullWidth
-                      id="email"
-                      label="Email Address"
-                      name="email"
-                      autoComplete="email"
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      required
-                      fullWidth
-                      type="password"
-                      name="password1"
-                      label="Password"
-                      id="password1"
-                      autoComplete="password1"
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      required
-                      fullWidth
-                      name="password2"
-                      label="Confirm Your Password"
-                      type="password"
-                      id="password2"
-                      autoComplete="password2"
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <FormControl fullWidth>
-                      <InputLabel id="user-type">You are</InputLabel>
-                      <Select
-                        labelId="user-type"
-                        name="user-type"
-                        id="user-type"
-                        value={is_teacher}
-                        label="Age"
-                        onChange={this.handleChange}
-                      >
-                        <MenuItem value={false}>Student</MenuItem>
-                        <MenuItem value={true}>Teacher</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                </Grid>
-                <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-                  Sign Up
+      <Grid textAlign="center" style={{ height: '100vh' }} verticalAlign="middle">
+        <Grid.Column style={{ maxWidth: 450 }}>
+          <Header as="h2" color="teal" textAlign="center">
+            Signup to your account
+          </Header>
+          {error && <p>{error.message}</p>}
+
+          <React.Fragment>
+            <Form size="large" onSubmit={this.handleSubmit}>
+              <Segment stacked>
+                <Form.Input
+                  onChange={this.handleChange}
+                  value={email}
+                  name="email"
+                  fluid
+                  icon="mail"
+                  iconPosition="left"
+                  placeholder="E-mail address"
+                />
+                <Form.Input
+                  onChange={this.handleChange}
+                  fluid
+                  value={password1}
+                  name="password1"
+                  icon="lock"
+                  iconPosition="left"
+                  placeholder="Password"
+                  type="password"
+                />
+                <Form.Input
+                  onChange={this.handleChange}
+                  fluid
+                  value={password2}
+                  name="password2"
+                  icon="lock"
+                  iconPosition="left"
+                  placeholder="Confirm password"
+                  type="password"
+                />
+                <Form.Select
+                  fluid
+                  onChange={this.handleSelectChange}
+                  placeholder="Bạn là"
+                  options={[
+                    { value: 'student', text: 'Hoc sinh' },
+                    { value: 'teacher', text: 'Giảng viên' },
+                  ]}
+                  required={true}
+                />
+
+                <Button color="teal" fluid size="large" loading={loading} disabled={loading}>
+                  Signup
                 </Button>
-                <Grid container justifyContent="flex-end">
-                  <Grid item>
-                    <Link href="#" variant="body2">
-                      Already have an account? Sign in
-                    </Link>
-                  </Grid>
-                </Grid>
-              </Box>
-            </Box>
-          </Container>
-        </ThemeProvider>
-        );
-      </>
+              </Segment>
+            </Form>
+            <Message>
+              Already have an account? <NavLink to="/login">Login</NavLink>
+            </Message>
+          </React.Fragment>
+        </Grid.Column>
+      </Grid>
     );
   }
 }
+
 const mapStateToProps = (state) => {
   return {
-    token: state.auth.token,
-    loading: state.auth.user,
+    loading: state.auth.loading,
     error: state.auth.error,
+    token: state.auth.token,
   };
 };
+
 const mapDispatchToProps = (dispatch) => {
   return {
-    signup: (email, password1, password2, is_teacher) => {
-      dispatch(creators.authSignup(email, password1, password2, is_teacher));
-    },
+    signup: (username, email, password1, password2, is_teacher) =>
+      dispatch(creators.authSignup(username, email, password1, password2, is_teacher)),
   };
 };
-export default connect(mapStateToProps, mapDispatchToProps)(SignUp);
+
+export default connect(mapStateToProps, mapDispatchToProps)(RegistrationForm);
