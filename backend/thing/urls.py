@@ -24,6 +24,7 @@ urlpatterns = [
     path("jsreverse/", django_js_reverse.views.urls_js, name="js_reverse"),
 
     path("api/", include(router.urls), name="api"),
+    path("api/assignments/", include("assignments.api.assignment.urls"), name="api"),
     path("api/", include("users.urls"), name="user"),
 
 ]

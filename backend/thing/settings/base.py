@@ -53,6 +53,7 @@ INSTALLED_APPS = [
 
     "common",
     "users",
+    'assignments',
 ]
 SITE_ID = 1
 MIDDLEWARE = [
@@ -118,7 +119,7 @@ REST_FRAMEWORK = {
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Ho_Chi_Minh"
 
 USE_I18N = True
 

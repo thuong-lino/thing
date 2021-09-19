@@ -23,7 +23,6 @@ class Home2 extends Component {
 
   render() {
     const { result } = this.props;
-    console.log(result);
     return (
       <>
         <div id="django-background">

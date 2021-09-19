@@ -53,7 +53,6 @@ const authLogin = (email, password) => {
         is_teacher: res.data.user_type.is_teacher,
         expirationDate: new Date(new Date().getTime() + EXPIRY_AGE * 1000),
       };
-      console.log(user);
       localStorage.setItem('user', JSON.stringify(user));
       dispatch(authSuccess(user));
       dispatch(checkAuthTimeout(EXPIRY_AGE));
@@ -80,7 +79,6 @@ const authSignup = (email, password1, password2, is_teacher) => {
         is_teacher,
         expirationDate: new Date(new Date().getTime() + 36000 * 1000),
       };
-      console.log(userRes);
       localStorage.setItem('user', JSON.stringify(userRes));
       dispatch({
         type: types.SIGNUP_SUCCESS,

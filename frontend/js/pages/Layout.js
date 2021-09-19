@@ -47,6 +47,9 @@ class Layout extends Component {
             <Link to="/">
               <Menu.Item header>Home</Menu.Item>
             </Link>
+            <Link to={`/assignments/`}>
+              <Menu.Item header>Assignment</Menu.Item>
+            </Link>
 
             {is_teacher && authenticated ? (
               <React.Fragment>
@@ -55,9 +58,6 @@ class Layout extends Component {
                 </Link>
                 <Link to={`/create/`}>
                   <Menu.Item header>Create</Menu.Item>
-                </Link>
-                <Link to={`/edit-assignment/`}>
-                  <Menu.Item header>Assignment</Menu.Item>
                 </Link>
               </React.Fragment>
             ) : !is_teacher && authenticated ? (
