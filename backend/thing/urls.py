@@ -16,6 +16,7 @@ for route in routes:
 
 urlpatterns = [
     path("", include("common.urls"), name="common"),
+    path("assignments/", include("assignments.urls"), name='assignments'),
     path('api-auth/', include('rest_framework.urls')),
     path('rest-auth/', include('rest_auth.urls')),
     path('rest-auth/registration/', include('rest_auth.registration.urls')),

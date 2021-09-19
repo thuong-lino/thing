@@ -65,20 +65,22 @@ class Layout extends Component {
                 <Menu.Item header>Profile</Menu.Item>
               </Link>
             ) : null}
-            {authenticated ? (
-              <Menu.Item header onClick={() => authLogout()}>
-                Logout
-              </Menu.Item>
-            ) : (
-              <React.Fragment>
-                <Link to="/login">
-                  <Menu.Item header>Login</Menu.Item>
-                </Link>
-                <Link to="/signup">
-                  <Menu.Item header>Signup</Menu.Item>
-                </Link>
-              </React.Fragment>
-            )}
+            <Menu.Menu position="right">
+              {authenticated ? (
+                <Menu.Item header onClick={() => authLogout()}>
+                  Logout
+                </Menu.Item>
+              ) : (
+                <React.Fragment>
+                  <Link to="/login">
+                    <Menu.Item header>Login</Menu.Item>
+                  </Link>
+                  <Link to="/signup">
+                    <Menu.Item header>Signup</Menu.Item>
+                  </Link>
+                </React.Fragment>
+              )}
+            </Menu.Menu>
           </Container>
         </Menu>
         {this.props.children}

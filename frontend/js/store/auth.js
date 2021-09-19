@@ -37,9 +37,15 @@ const authFail = (error) => {
   };
 };
 const logout = () => {
-  localStorage.removeItem('user');
   return {
     type: types.LOGOUT_SUCCESS,
+  };
+};
+const doLogout = () => {
+  return (dispatch) => {
+    localStorage.removeItem('user');
+    const res = api.post('/rest-auth/logout/');
+    dispatch(logout());
   };
 };
 const authLogin = (email, password) => {
@@ -49,6 +55,7 @@ const authLogin = (email, password) => {
       const res = await api.post('/rest-auth/login/', { email: email, password: password });
       const user = {
         token: res.data.key,
+        firstname: res.data.firstname.firstname,
         userID: res.data.user,
         is_teacher: res.data.user_type.is_teacher,
         expirationDate: new Date(new Date().getTime() + EXPIRY_AGE * 1000),
@@ -61,20 +68,24 @@ const authLogin = (email, password) => {
     }
   };
 };
-const authSignup = (email, password1, password2, is_teacher) => {
+const authSignup = (firstname, lastname, email, password1, password2, is_teacher) => {
   return async (dispatch) => {
     dispatch({ type: types.SIGNUP_START });
     try {
       const user = {
+        firstname,
+        lastname,
         email,
         password1,
         password2,
         is_teacher,
       };
       const res = await api.post('/rest-auth/registration/', user);
+      console.log(res.data);
       const userRes = {
         token: res.data.key,
         email,
+        firstname,
         userID: res.data.user,
         is_teacher,
         expirationDate: new Date(new Date().getTime() + 36000 * 1000),
@@ -93,7 +104,7 @@ const authSignup = (email, password1, password2, is_teacher) => {
 // Action creators
 export const creators = {
   authLogin: authLogin,
-  authLogout: logout,
+  authLogout: doLogout,
   authSignup: authSignup,
 };
 

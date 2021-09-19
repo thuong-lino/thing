@@ -11,6 +11,8 @@ class RegistrationForm extends React.Component {
       email: '',
       password1: '',
       password2: '',
+      firstname: '',
+      lastname: '',
       is_teacher: false,
     };
     this.handleChange = this.handleChange.bind(this);
@@ -21,8 +23,8 @@ class RegistrationForm extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
 
-    const { email, password1, password2, is_teacher } = this.state;
-    this.props.signup(email, password1, password2, is_teacher);
+    const { firstname, lastname, email, password1, password2, is_teacher } = this.state;
+    this.props.signup(firstname, lastname, email, password1, password2, is_teacher);
   }
 
   handleChange(e) {
@@ -40,7 +42,7 @@ class RegistrationForm extends React.Component {
   }
 
   render() {
-    const { username, email, password1, password2 } = this.state;
+    const { firstname, lastname, email, password1, password2 } = this.state;
     const { error, loading, token } = this.props;
     if (token) {
       return <Redirect to="/" />;
@@ -56,6 +58,25 @@ class RegistrationForm extends React.Component {
           <React.Fragment>
             <Form size="large" onSubmit={this.handleSubmit}>
               <Segment stacked>
+                <Form.Input
+                  onChange={this.handleChange}
+                  value={lastname}
+                  name="lastname"
+                  fluid
+                  icon="address card"
+                  iconPosition="left"
+                  placeholder="Họ và tên đệm"
+                />
+                <Form.Input
+                  onChange={this.handleChange}
+                  value={firstname}
+                  name="firstname"
+                  fluid
+                  icon="address card"
+                  iconPosition="left"
+                  placeholder="Tên"
+                />
+
                 <Form.Input
                   onChange={this.handleChange}
                   value={email}
@@ -121,8 +142,10 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    signup: (username, email, password1, password2, is_teacher) =>
-      dispatch(creators.authSignup(username, email, password1, password2, is_teacher)),
+    signup: (firstname, lastname, username, email, password1, password2, is_teacher) =>
+      dispatch(
+        creators.authSignup(firstname, lastname, username, email, password1, password2, is_teacher)
+      ),
   };
 };
 

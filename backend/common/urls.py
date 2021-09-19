@@ -8,6 +8,4 @@ urlpatterns = [
     path('login/', views.IndexView.as_view(), name='login'),
     path('signup/', views.IndexView.as_view(), name='signup'),
 
-    path('assignments/', views.IndexView.as_view(), name='assignments'),
-
 ]

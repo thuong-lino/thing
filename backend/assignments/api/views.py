@@ -6,11 +6,13 @@ from ..models import Assignment, GradedAssignment
 from users.models import User
 from ..serializers import AssignmentSerializer, GradedSerializer
 from ..utils import highest_grade
+from rest_framework.permissions import IsAuthenticated
 
 
 class AssignmentViewSet(viewsets.ModelViewSet):
     serializer_class = AssignmentSerializer
     #queryset = Assignment.objects.all()
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         queryset = Assignment.objects.all()
