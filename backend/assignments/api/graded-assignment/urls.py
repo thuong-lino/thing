@@ -1,8 +1,8 @@
-from ..views import CreateAssignmentView, GradedAssignmentListView
+from ..views import SubmitAssignmentView, GradedAssignmentListView
 from django.urls import path
 
 
 urlpatterns = [
     path('', GradedAssignmentListView.as_view()),
-    path('create/', CreateAssignmentView.as_view())
+    path('submit/', SubmitAssignmentView.as_view())
 ]

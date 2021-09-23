@@ -53,6 +53,7 @@ const authLogin = (email, password) => {
     dispatch(authStart());
     try {
       const res = await api.post('/rest-auth/login/', { email: email, password: password });
+      console.log(res.data);
       const user = {
         token: res.data.key,
         firstname: res.data.firstname.firstname,
@@ -62,7 +63,6 @@ const authLogin = (email, password) => {
       };
       localStorage.setItem('user', JSON.stringify(user));
       dispatch(authSuccess(user));
-      dispatch(checkAuthTimeout(EXPIRY_AGE));
     } catch (error) {
       dispatch(authFail());
     }
@@ -84,7 +84,6 @@ const authSignup = (firstname, lastname, email, password1, password2, is_teacher
       console.log(res.data);
       const userRes = {
         token: res.data.key,
-        email,
         firstname,
         userID: res.data.user,
         is_teacher,
@@ -112,6 +111,7 @@ export const creators = {
 const initialState = {
   token: null,
   is_teacher: null,
+  firstname: null,
   userID: null,
   error: null,
   loading: false,
@@ -126,8 +126,8 @@ const loginStart = (state, action) => {
 const loginSuccess = (state, action) => {
   return updateObject(state, {
     token: action.user.token,
-    username: action.user.username,
     is_teacher: action.user.is_teacher,
+    firstname: action.user.firstname,
     userID: action.user.userID,
     error: null,
     loading: false,

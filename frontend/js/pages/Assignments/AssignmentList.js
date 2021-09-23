@@ -5,7 +5,7 @@ import api from '../../store/api';
 import Hoc from '../../Hoc';
 
 import { Colors } from '../../components/Colors';
-import { Loader, Image, Segment, Header, Grid, Card } from 'semantic-ui-react';
+import { Loader, Container, Header, Grid, Card } from 'semantic-ui-react';
 async function handleFetchASNTList() {
   try {
     const res = await api.get('../api/assignments/');
@@ -33,12 +33,12 @@ class AssignmentList extends Component {
   }
   renderItem(item, index) {
     return (
-      <Grid.Column key={index} stretched width={3}>
+      <Grid.Column key={index} stretched>
         <Card
           centered
           header={item.title}
           as={Link}
-          to={`/assignment/${item.id}`}
+          to={`/assignments/${item.id}/`}
           color={Colors[index % Colors.length]}
           extra={'desasda sdas da sd as da sd ads des as das dasd asdasda sdads'}
           meta={'teacher : thuong'}
@@ -54,13 +54,13 @@ class AssignmentList extends Component {
           {error ? 'Some Error' : null}
           <Header as="h3" content="Assignment List" textAlign="center" style={style.h3} />
           {assignments ? (
-            <Fragment>
-              <Grid columns={3} stackable>
+            <Container>
+              <Grid columns={5} stackable>
                 {assignments.map((assignment, index) => {
                   return this.renderItem(assignment, index);
                 })}
               </Grid>
-            </Fragment>
+            </Container>
           ) : (
             <Loader active size="medium" inline="centered" />
           )}

@@ -3,17 +3,14 @@ import { connect } from 'react-redux';
 import { creators } from '../store/auth';
 import { authSuccess } from '../store/auth';
 import { withRouter, Redirect, Link } from 'react-router-dom';
+import { push } from 'connected-react-router';
 
 import { Container, Divider, Grid, Header, Image, List, Menu, Segment } from 'semantic-ui-react';
 
 class Layout extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      open: true,
-    };
-    this.logout = this.logout.bind(this);
-    this.toggleDrawer = this.toggleDrawer.bind(this);
+    this.state = {};
   }
 
   componentDidMount() {
@@ -30,16 +27,8 @@ class Layout extends Component {
       }
     }
   }
-  logout() {
-    this.props.authLogout();
-  }
-  toggleDrawer() {
-    this.setState({ open: !this.state.open });
-  }
-
   render() {
-    const { authenticated, is_teacher, userID, authLogin, authLogout } = this.props;
-    const { open } = this.state;
+    const { authenticated, is_teacher, userID, authLogout, push } = this.props;
     return (
       <>
         <Menu inverted>
@@ -67,7 +56,13 @@ class Layout extends Component {
             ) : null}
             <Menu.Menu position="right">
               {authenticated ? (
-                <Menu.Item header onClick={() => authLogout()}>
+                <Menu.Item
+                  header
+                  onClick={() => {
+                    authLogout();
+                    push('/');
+                  }}
+                >
                   Logout
                 </Menu.Item>
               ) : (
@@ -157,6 +152,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     authLogout: () => dispatch(creators.authLogout()),
     authSuccess: (user) => dispatch(authSuccess(user)),
+    push: (path) => {
+      dispatch(push(path));
+    },
   };
 };
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Layout));

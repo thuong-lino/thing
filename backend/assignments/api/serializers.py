@@ -1,6 +1,6 @@
 from re import T
 from rest_framework import serializers
-from .models import Assignment, ConstructedResponseQuestion, GradedAssignment, Question, Choice
+from ..models import Assignment, ConstructedResponseQuestion, GradedAssignment, Question, Choice
 from users.models import User
 
 
@@ -32,7 +32,8 @@ class AssignmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Assignment
-        fields = ['id', 'title', 'teacher', 'student', 'questions', 'CRQs']
+        fields = ['id', 'title', 'teacher', 'student',
+                  'questions', 'CRQs']
 
     def create(self, request):
         data = request.data
@@ -64,18 +65,20 @@ class AssignmentSerializer(serializers.ModelSerializer):
         return assignment
 
 
-class GradedSerializer(serializers.ModelSerializer):
+class SRQs_GradedSerializer(serializers.ModelSerializer):
     student = StringSerializer()
     assignment = StringSerializer()
 
     class Meta:
         model = GradedAssignment
-        fields = ('student', 'assignment', 'grade')
+        fields = ('student', 'assignment', 'SRQs_grade', 'CRQs_grade')
+        read_only_fields = ['SRQs_grade', 'CRQs_grade']
 
     def create(self, request):
         data = request.data
-        userAns = data['usersAnswers']
-        student = User.objects.get(username=data["student"])
+        print(data)
+        userAns = data['userAnswers']
+        student = User.objects.get(pk=data["userID"])
         assignment = Assignment.objects.get(pk=data["asntId"])
         questions = Question.objects.filter(assignment=data["asntId"])
         count = 0
@@ -84,8 +87,8 @@ class GradedSerializer(serializers.ModelSerializer):
             # print(qn.answer)
             if str(qn.answer) == userAns[order]:
                 count += 1
-        grade = count / len(questions) * 100
-        graded = GradedAssignment.objects.create(
-            student=student, assignment=assignment, grade=grade)
-        graded.save()
-        return graded
+        SRQs_grade = count / len(questions) * 100
+        SRQs_grade = GradedAssignment.objects.create(
+            student=student, assignment=assignment, SRQs_grade=SRQs_grade)
+        SRQs_grade.save()
+        return SRQs_grade

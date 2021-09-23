@@ -14,12 +14,13 @@ class Assignment(models.Model):
 
 
 class GradedAssignment(models.Model):
-    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    student = models.ForeignKey(
+        User, related_name="graded_student", on_delete=models.CASCADE)
     assignment = models.ForeignKey(
-        Assignment, on_delete=models.SET_NULL, blank=True, null=True)
+        Assignment, on_delete=models.SET_NULL, related_name="graded_assignment", blank=True, null=True)
 
-    SRQs_grade = models.FloatField()
-    CRQs_grade = models.FloatField()
+    SRQs_grade = models.FloatField(blank=True, null=True)
+    CRQs_grade = models.FloatField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.student.username} - {self.assignment} : {self.grade}"
@@ -53,6 +54,8 @@ class AnswerSRQuestion(models.Model):
     sr_question = models.ForeignKey(Question, on_delete=models.CASCADE)
     user_answer = models.ForeignKey(
         Choice, on_delete=models.CASCADE, related_name="user_answer", null=True)
+    student = models.ForeignKey(
+        User, related_name="answer_srq", on_delete=models.CASCADE, default='')
 
     def __str__(self):
         return f" {self.question} - {self.user_answer}"
@@ -74,6 +77,8 @@ class AnswerCRQuestion(models.Model):
     cr_question = models.ForeignKey(
         ConstructedResponseQuestion, on_delete=models.CASCADE)
     user_answer = models.CharField(max_length=255, blank=True, null=True)
+    student = models.ForeignKey(
+        User, related_name="answer_crq", on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self) -> str:
         return f" {self.cr_question} - {self.user_answer[:15]}"

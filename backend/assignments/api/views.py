@@ -4,7 +4,7 @@ from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.views import APIView
 from ..models import Assignment, GradedAssignment
 from users.models import User
-from ..serializers import AssignmentSerializer, GradedSerializer
+from .serializers import AssignmentSerializer, SRQs_GradedSerializer
 from ..utils import highest_grade
 from rest_framework.permissions import IsAuthenticated
 
@@ -44,7 +44,7 @@ class UpdateAssignment(APIView):
 
 
 class GradedAssignmentListView (ListAPIView):
-    serializer_class = GradedSerializer
+    serializer_class = SRQs_GradedSerializer
 
     def get_queryset(self):
         queryset = GradedAssignment.objects.all()
@@ -55,14 +55,15 @@ class GradedAssignmentListView (ListAPIView):
         return queryset
 
 
-class CreateAssignmentView(CreateAPIView):
-    serializer_class = GradedSerializer
+class SubmitAssignmentView(CreateAPIView):
+    serializer_class = SRQs_GradedSerializer
 
     def post(self, request):
-        serializer = GradedSerializer(data=request.data)
+        serializer = SRQs_GradedSerializer(data=request.data)
         assignment = serializer.create(request)
-        serializer.is_valid
-        if assignment:
-            return Response(status=status.HTTP_201_CREATED)
+        if serializer.is_valid():
+            print("is not valid: ", serializer.errors)
+            if assignment:
+                return Response(status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
