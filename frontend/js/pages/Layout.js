@@ -5,12 +5,23 @@ import { authSuccess } from '../store/auth';
 import { withRouter, Link } from 'react-router-dom';
 import { push } from 'connected-react-router';
 
-import { Container, Divider, Grid, Header, Image, List, Menu, Segment } from 'semantic-ui-react';
+import {
+  Container,
+  Button,
+  Grid,
+  Header,
+  List,
+  Menu,
+  Segment,
+  Visibility,
+} from 'semantic-ui-react';
 
 class Layout extends Component {
   constructor(props) {
     super(props);
     this.state = {};
+    this.hideFixedMenu = this.hideFixedMenu.bind(this);
+    this.showFixedMenu = this.showFixedMenu.bind(this);
   }
 
   componentDidMount() {
@@ -27,114 +38,145 @@ class Layout extends Component {
       }
     }
   }
+  hideFixedMenu() {
+    this.setState({ fixed: false });
+  }
+  showFixedMenu() {
+    this.setState({ fixed: true });
+  }
   render() {
-    const { authenticated, is_teacher, userID, authLogout, push } = this.props;
+    const { authenticated, is_teacher, userID, authLogout, children } = this.props;
+    const { push, pathname } = this.props;
+    const { fixed } = this.state;
+    console.log(pathname);
     return (
       <>
-        <Menu inverted>
-          <Container>
-            <Link to="/">
-              <Menu.Item header>Home</Menu.Item>
-            </Link>
-            <Link to={`/assignments/`}>
-              <Menu.Item header>Assignment</Menu.Item>
-            </Link>
+        <Visibility
+          once={false}
+          onBottomPassed={this.showFixedMenu}
+          onBottomPassedReverse={this.hideFixedMenu}
+        ></Visibility>
+        <Segment inverted textAlign="center" style={{ padding: '1em 0em' }} vertical>
+          <Menu
+            fixed={fixed ? 'top' : null}
+            inverted={!fixed}
+            pointing={!fixed}
+            secondary={!fixed}
+            size="large"
+          >
+            <Container>
+              <Menu.Item
+                as="a"
+                active={pathname === '/'}
+                onClick={() => {
+                  push('/');
+                }}
+              >
+                Home
+              </Menu.Item>
+              <Menu.Item
+                as="a"
+                active={pathname === '/assignments/'}
+                onClick={() => {
+                  push('/assignments/');
+                }}
+              >
+                Assignments
+              </Menu.Item>
 
-            {is_teacher && authenticated ? (
-              <React.Fragment>
+              {is_teacher && authenticated ? (
+                <React.Fragment>
+                  {/* <Menu.Item
+                as="a"
+                active={pathname === '/assignments/'}
+                onClick={() => {
+                  push(`/profile/${userID}`);
+                }}
+              >
+                Profile
+              </Menu.Item> */}
+                  <Menu.Item
+                    as="a"
+                    active={pathname === `/assignments/create/`}
+                    onClick={() => {
+                      push(`/assignments/create/`);
+                    }}
+                  >
+                    Create
+                  </Menu.Item>
+                </React.Fragment>
+              ) : !is_teacher && authenticated ? (
                 <Link to={`/profile/${userID}`}>
                   <Menu.Item header>Profile</Menu.Item>
                 </Link>
-                <Link to={`/assignments/create/`}>
-                  <Menu.Item header>Create</Menu.Item>
-                </Link>
-              </React.Fragment>
-            ) : !is_teacher && authenticated ? (
-              <Link to={`/profile/${userID}`}>
-                <Menu.Item header>Profile</Menu.Item>
-              </Link>
-            ) : null}
-            <Menu.Menu position="right">
-              {authenticated ? (
-                <Menu.Item
-                  header
-                  onClick={() => {
-                    authLogout();
-                    push('/');
-                  }}
-                >
-                  Logout
-                </Menu.Item>
-              ) : (
-                <React.Fragment>
-                  <Link to="/login">
-                    <Menu.Item header>Login</Menu.Item>
-                  </Link>
-                  <Link to="/signup">
-                    <Menu.Item header>Signup</Menu.Item>
-                  </Link>
-                </React.Fragment>
-              )}
-            </Menu.Menu>
-          </Container>
-        </Menu>
-        {this.props.children}
+              ) : null}
+              <Menu.Menu position="right">
+                {authenticated ? (
+                  <Button
+                    as="a"
+                    inverted={!fixed}
+                    onClick={() => {
+                      authLogout();
+                      push('/');
+                    }}
+                  >
+                    Log Out
+                  </Button>
+                ) : (
+                  <React.Fragment>
+                    <Button as="a" inverted={!fixed} onClick={() => push('/login/')}>
+                      Log in
+                    </Button>
+                    <Button
+                      as="a"
+                      inverted={!fixed}
+                      primary={fixed}
+                      style={{ marginLeft: '0.5em' }}
+                      onClick={() => push('/signup/')}
+                    >
+                      Sign Up
+                    </Button>
+                  </React.Fragment>
+                )}
+              </Menu.Menu>
+            </Container>
+          </Menu>
+        </Segment>
+        {children}
 
         <Segment inverted vertical style={{ margin: '5em 0em 0em', padding: '5em 0em' }}>
-          <Container textAlign="center">
+          <Container>
             <Grid divided inverted stackable>
-              <Grid.Column width={3}>
-                <Header inverted as="h4" content="Group 1" />
-                <List link inverted>
-                  <List.Item as="a">Link One</List.Item>
-                  <List.Item as="a">Link Two</List.Item>
-                  <List.Item as="a">Link Three</List.Item>
-                  <List.Item as="a">Link Four</List.Item>
-                </List>
-              </Grid.Column>
-              <Grid.Column width={3}>
-                <Header inverted as="h4" content="Group 2" />
-                <List link inverted>
-                  <List.Item as="a">Link One</List.Item>
-                  <List.Item as="a">Link Two</List.Item>
-                  <List.Item as="a">Link Three</List.Item>
-                  <List.Item as="a">Link Four</List.Item>
-                </List>
-              </Grid.Column>
-              <Grid.Column width={3}>
-                <Header inverted as="h4" content="Group 3" />
-                <List link inverted>
-                  <List.Item as="a">Link One</List.Item>
-                  <List.Item as="a">Link Two</List.Item>
-                  <List.Item as="a">Link Three</List.Item>
-                  <List.Item as="a">Link Four</List.Item>
-                </List>
-              </Grid.Column>
-              <Grid.Column width={7}>
-                <Header inverted as="h4" content="Footer Header" />
-                <p>
-                  Extra space for a call to action inside the footer that could help re-engage
-                  users.
-                </p>
-              </Grid.Column>
+              <Grid.Row>
+                <Grid.Column width={3}>
+                  <Header inverted as="h4" content="About" />
+                  <List link inverted>
+                    <List.Item as="a">Sitemap</List.Item>
+                    <List.Item as="a">Contact Us</List.Item>
+                    <List.Item as="a">Religious Ceremonies</List.Item>
+                    <List.Item as="a">Gazebo Plans</List.Item>
+                  </List>
+                </Grid.Column>
+                <Grid.Column width={3}>
+                  <Header inverted as="h4" content="Services" />
+                  <List link inverted>
+                    <List.Item as="a">Banana Pre-Order</List.Item>
+                    <List.Item as="a">DNA FAQ</List.Item>
+                    <List.Item as="a">How To Access</List.Item>
+                    <List.Item as="a">Favorite X-Men</List.Item>
+                  </List>
+                </Grid.Column>
+                <Grid.Column width={7}>
+                  <Header as="h4" inverted>
+                    Footer Header
+                  </Header>
+                  <p>
+                    Extra space for a call to action inside the footer that could help re-engage
+                    users.
+                  </p>
+                </Grid.Column>
+              </Grid.Row>
             </Grid>
-
-            <Divider inverted section />
-            {/* <Image centered size="mini" src="/logo.png" /> */}
-            <List horizontal inverted divided link size="small">
-              <List.Item as="a" href="#">
-                Site Map
-              </List.Item>
-              <List.Item as="a" href="#">
-                Contact Us
-              </List.Item>
-              <List.Item as="a" href="#">
-                Terms and Conditions
-              </List.Item>
-              <List.Item as="a" href="#">
-                Privacy Policy
-              </List.Item>
-            </List>
           </Container>
         </Segment>
       </>
@@ -146,6 +188,7 @@ const mapStateToProps = (state) => {
     authenticated: state.auth.token !== null,
     userID: state.auth.userID,
     is_teacher: state.auth.is_teacher,
+    pathname: state.router.location.pathname,
   };
 };
 const mapDispatchToProps = (dispatch) => {
