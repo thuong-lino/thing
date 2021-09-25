@@ -1,19 +1,11 @@
 import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom';
-
+import { connect } from 'react-redux';
 import api from '../../store/api';
 import Hoc from '../../Hoc';
 
 import { Colors } from '../../components/Colors';
 import { Loader, Container, Header, Grid, Card } from 'semantic-ui-react';
-async function handleFetchASNTList() {
-  try {
-    const res = await api.get('../api/assignments/');
-    return res;
-  } catch (error) {
-    return { error: error };
-  }
-}
 const style = {
   h3: {
     marginTop: '1em',
@@ -28,8 +20,13 @@ class AssignmentList extends Component {
     };
   }
   async componentDidMount() {
-    const res = await handleFetchASNTList();
-    this.setState({ assignments: res.data.results, error: res.error });
+    const { userID } = this.props;
+    api
+      .get('/api/assignments/', { params: { userID } })
+      .then((res) => {
+        this.setState({ assignments: res.data.results });
+      })
+      .catch((error) => this.setState({ error }));
   }
   renderItem(item, index) {
     return (
@@ -48,26 +45,35 @@ class AssignmentList extends Component {
   }
   render() {
     const { assignments, error } = this.state;
-    return (
-      <>
-        <Hoc>
-          {error ? 'Some Error' : null}
-          <Header as="h3" content="Assignment List" textAlign="center" style={style.h3} />
-          {assignments ? (
-            <Container>
-              <Grid columns={5} stackable>
-                {assignments.map((assignment, index) => {
-                  return this.renderItem(assignment, index);
-                })}
-              </Grid>
-            </Container>
-          ) : (
-            <Loader active size="medium" inline="centered" />
-          )}
-        </Hoc>
-      </>
-    );
+    if (!assignments) {
+      return <></>;
+    } else {
+      return (
+        <>
+          <Hoc>
+            {error ? 'Some Error' : null}
+            <Header as="h3" content="Assignment List" textAlign="center" style={style.h3} />
+            {assignments ? (
+              <Container>
+                <Grid columns={5} stackable>
+                  {assignments.map((assignment, index) => {
+                    return this.renderItem(assignment, index);
+                  })}
+                </Grid>
+              </Container>
+            ) : (
+              <Loader active size="medium" inline="centered" />
+            )}
+          </Hoc>
+        </>
+      );
+    }
   }
 }
+const mapStateToProps = (state) => {
+  return {
+    userID: state.auth.userID,
+  };
+};
 
-export default AssignmentList;
+export default connect(mapStateToProps)(AssignmentList);

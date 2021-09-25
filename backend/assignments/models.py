@@ -19,11 +19,11 @@ class GradedAssignment(models.Model):
     assignment = models.ForeignKey(
         Assignment, on_delete=models.SET_NULL, related_name="graded_assignment", blank=True, null=True)
 
-    SRQs_grade = models.FloatField(blank=True, null=True)
-    CRQs_grade = models.FloatField(blank=True, null=True)
+    SRQs_grade = models.FloatField(default=0)
+    CRQs_grade = models.FloatField(default=0)
 
     def __str__(self):
-        return f"{self.student.username} - {self.assignment} : {self.grade}"
+        return f"{self.student.firstname} - {self.assignment} - {self.SRQs_grade}"
 
     def get_total_grade(self):
         return self.SRQs_grade + self.CRQs_grade

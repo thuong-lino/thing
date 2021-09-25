@@ -12,6 +12,12 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['email', 'firstname', 'password', 'is_teacher']
 
 
+class StudentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['email']
+
+
 class CustomRegisterSerializer(RegisterSerializer):
     firstname = serializers.CharField()
     lastname = serializers.CharField()

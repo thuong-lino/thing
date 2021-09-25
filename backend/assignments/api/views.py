@@ -1,11 +1,11 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework.generics import CreateAPIView, ListAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.views import APIView
 from ..models import Assignment, GradedAssignment
 from users.models import User
 from .serializers import AssignmentSerializer, SRQs_GradedSerializer
-from ..utils import highest_grade
+from ..utils import highest_SRQs_grade
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -21,10 +21,10 @@ class AssignmentViewSet(viewsets.ModelViewSet):
             user = User.objects.get(pk=userID)
             if user.is_teacher:
                 queryset = Assignment.objects.filter(
-                    teacher__username=userID)
+                    teacher__pk=userID)
             else:
                 queryset = Assignment.objects.filter(
-                    student__username=userID)
+                    student__pk=userID)
         return queryset
 
     def create(self, request):
@@ -48,10 +48,14 @@ class GradedAssignmentListView (ListAPIView):
 
     def get_queryset(self):
         queryset = GradedAssignment.objects.all()
-        pk = self.request.query_params.get('pk', None)
-        if pk is not None:
-            queryset = queryset.filter(student_id=pk)
-            queryset = highest_grade(queryset)
+        # userid pk
+        print(queryset)
+        userID = self.request.query_params.get('userID', None)
+        assignmentID = self.request.query_params.get('assignmentID', None)
+        if userID is not None:
+            queryset = queryset.filter(
+                student_id=userID, assignment_id=assignmentID)
+            queryset = highest_SRQs_grade(queryset)
         return queryset
 
 
@@ -62,7 +66,6 @@ class SubmitAssignmentView(CreateAPIView):
         serializer = SRQs_GradedSerializer(data=request.data)
         assignment = serializer.create(request)
         if serializer.is_valid():
-            print("is not valid: ", serializer.errors)
             if assignment:
                 return Response(status=status.HTTP_201_CREATED)
 

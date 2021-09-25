@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { creators } from '../store/auth';
 import { authSuccess } from '../store/auth';
-import { withRouter, Redirect, Link } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { push } from 'connected-react-router';
 
 import { Container, Divider, Grid, Header, Image, List, Menu, Segment } from 'semantic-ui-react';
@@ -45,7 +45,7 @@ class Layout extends Component {
                 <Link to={`/profile/${userID}`}>
                   <Menu.Item header>Profile</Menu.Item>
                 </Link>
-                <Link to={`/create/`}>
+                <Link to={`/assignments/create/`}>
                   <Menu.Item header>Create</Menu.Item>
                 </Link>
               </React.Fragment>
