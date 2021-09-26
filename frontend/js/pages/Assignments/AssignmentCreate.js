@@ -88,7 +88,6 @@ class AssignmentCreate extends React.Component {
 
   onChange(e) {
     let arr = e.target.id.split('-');
-    console.log(e.target.id);
     const id = arr[0] - 1;
     const target = arr[1];
     var value;
@@ -177,6 +176,7 @@ class AssignmentCreate extends React.Component {
                 id="student-selection"
                 placeholder="Student"
                 options={options}
+                style={{ padding: '5px 10px' }}
                 onChange={this.handleStudentChange}
               />
               <Form.Button

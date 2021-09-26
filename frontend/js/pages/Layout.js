@@ -14,6 +14,7 @@ import {
   Menu,
   Segment,
   Visibility,
+  Icon,
 } from 'semantic-ui-react';
 
 class Layout extends Component {
@@ -45,10 +46,9 @@ class Layout extends Component {
     this.setState({ fixed: true });
   }
   render() {
-    const { authenticated, is_teacher, userID, authLogout, children } = this.props;
+    const { authenticated, is_teacher, userID, authLogout, children, name } = this.props;
     const { push, pathname } = this.props;
     const { fixed } = this.state;
-    console.log(pathname);
     return (
       <>
         <Visibility
@@ -56,7 +56,12 @@ class Layout extends Component {
           onBottomPassed={this.showFixedMenu}
           onBottomPassedReverse={this.hideFixedMenu}
         ></Visibility>
-        <Segment inverted textAlign="center" style={{ padding: '1em 0em' }} vertical>
+        <Segment
+          inverted
+          textAlign="center"
+          style={{ padding: '0.5em 0em', minHeight: pathname == '/' ? 700 : 0 }}
+          vertical
+        >
           <Menu
             fixed={fixed ? 'top' : null}
             inverted={!fixed}
@@ -86,15 +91,6 @@ class Layout extends Component {
 
               {is_teacher && authenticated ? (
                 <React.Fragment>
-                  {/* <Menu.Item
-                as="a"
-                active={pathname === '/assignments/'}
-                onClick={() => {
-                  push(`/profile/${userID}`);
-                }}
-              >
-                Profile
-              </Menu.Item> */}
                   <Menu.Item
                     as="a"
                     active={pathname === `/assignments/create/`}
@@ -112,35 +108,71 @@ class Layout extends Component {
               ) : null}
               <Menu.Menu position="right">
                 {authenticated ? (
-                  <Button
-                    as="a"
-                    inverted={!fixed}
-                    onClick={() => {
-                      authLogout();
-                      push('/');
-                    }}
-                  >
-                    Log Out
-                  </Button>
+                  <>
+                    <Menu.Item name={`Hi ${name}`} />
+
+                    <Button
+                      as="a"
+                      inverted={!fixed}
+                      content={`Log Out`}
+                      style={{ margin: '5px 0px 5px 5px' }}
+                      labelPosition="right"
+                      icon="log out"
+                      fitted="true"
+                      onClick={() => {
+                        authLogout();
+                        push('/');
+                      }}
+                    />
+                  </>
                 ) : (
                   <React.Fragment>
-                    <Button as="a" inverted={!fixed} onClick={() => push('/login/')}>
-                      Log in
-                    </Button>
+                    <Button
+                      as="a"
+                      inverted={!fixed}
+                      onClick={() => push('/login/')}
+                      content={`Sign In`}
+                      labelPosition="left"
+                      icon="log out"
+                      fitted="true"
+                      style={{ margin: '5px 0px 5px 5px' }}
+                    />
+
                     <Button
                       as="a"
                       inverted={!fixed}
                       primary={fixed}
-                      style={{ marginLeft: '0.5em' }}
                       onClick={() => push('/signup/')}
-                    >
-                      Sign Up
-                    </Button>
+                      content={`Sign up`}
+                      style={{ margin: '5px 0px 5px 5px' }}
+                      labelPosition="right"
+                      icon="signup"
+                      fitted="true"
+                    />
                   </React.Fragment>
                 )}
               </Menu.Menu>
             </Container>
           </Menu>
+          {pathname == '/' ? (
+            <Container text>
+              <Header
+                as="h1"
+                content="This is an image"
+                inverted
+                style={{
+                  fontSize: '4em',
+                  fontWeight: 'normal',
+                  marginBottom: 0,
+                  marginTop: '3em',
+                }}
+              />
+              <Button primary size="huge" onClick={() => push('/assignments/')}>
+                Assignment
+                <Icon name="right arrow" />
+              </Button>
+            </Container>
+          ) : null}
         </Segment>
         {children}
 
@@ -186,6 +218,7 @@ class Layout extends Component {
 const mapStateToProps = (state) => {
   return {
     authenticated: state.auth.token !== null,
+    name: state.auth.firstname,
     userID: state.auth.userID,
     is_teacher: state.auth.is_teacher,
     pathname: state.router.location.pathname,
