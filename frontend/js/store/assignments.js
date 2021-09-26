@@ -17,7 +17,7 @@ const createASNT = (token, asnt) => {
       Authorization: `Token ${token}`,
     };
     api
-      .post(`http://127.0.0.1:8000/api/assignments/`, asnt)
+      .post(`/api/assignments/`, asnt)
       .then((res) => {
         dispatch({
           type: types.CREATE_ASSIGNMENT_SUCCESS,
