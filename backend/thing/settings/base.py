@@ -155,15 +155,15 @@ WEBPACK_LOADER = {
 }
 
 # Celery
-CELERY_ACCEPT_CONTENT = ["json"]
-CELERY_TASK_SERIALIZER = "json"
-CELERY_RESULT_SERIALIZER = "json"
-CELERY_ACKS_LATE = True
-CELERY_TIMEZONE = TIME_ZONE
+# CELERY_ACCEPT_CONTENT = ["json"]
+# CELERY_TASK_SERIALIZER = "json"
+# CELERY_RESULT_SERIALIZER = "json"
+# CELERY_ACKS_LATE = True
+# CELERY_TIMEZONE = TIME_ZONE
 
-# Sentry
-SENTRY_DSN = config("SENTRY_DSN", default="")
-COMMIT_SHA = config("HEROKU_SLUG_COMMIT", default="")
+# # Sentry
+# SENTRY_DSN = config("SENTRY_DSN", default="")
+# COMMIT_SHA = config("HEROKU_SLUG_COMMIT", default="")
 
 # Fix for Safari 12 compatibility issues, please check:
 # https://github.com/vintasoftware/safari-samesite-cookie-issue
