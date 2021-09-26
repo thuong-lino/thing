@@ -80,8 +80,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "common.context_processors.sentry_dsn",
-                "common.context_processors.commit_sha",
+                # "common.context_processors.sentry_dsn",
+                # "common.context_processors.commit_sha",
             ],
             "loaders": [
                 (
