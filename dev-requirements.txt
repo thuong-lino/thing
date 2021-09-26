@@ -6,7 +6,7 @@
 #
 asgiref==3.4.1
     # via django
-astroid==2.7.3
+astroid==2.8.0
     # via
     #   pylint
     #   pylint-celery
@@ -22,7 +22,7 @@ certifi==2021.5.30
     # via requests
 cfgv==3.3.1
     # via pre-commit
-charset-normalizer==2.0.5
+charset-normalizer==2.0.6
     # via requests
 click==8.0.1
     # via
@@ -30,7 +30,7 @@ click==8.0.1
     #   safety
 coverage==5.5
     # via -r dev-requirements.in
-distlib==0.3.2
+distlib==0.3.3
     # via virtualenv
 django==3.2.7
     # via
@@ -53,9 +53,9 @@ flake8-polyfill==1.0.2
     # via pep8-naming
 gitdb==4.0.7
     # via gitpython
-gitpython==3.1.18
+gitpython==3.1.24
     # via bandit
-identify==2.2.14
+identify==2.2.15
     # via pre-commit
 idna==3.2
     # via requests
@@ -86,14 +86,14 @@ pbr==5.6.0
     # via stevedore
 pep8-naming==0.10.0
     # via prospector
-platformdirs==2.3.0
+platformdirs==2.4.0
     # via
     #   black
     #   pylint
     #   virtualenv
 pre-commit==2.15.0
     # via -r dev-requirements.in
-prospector[with-vulture]==1.5.0.1
+prospector[with-vulture]==1.5.1
     # via -r dev-requirements.in
 pycodestyle==2.6.0
     # via
@@ -105,7 +105,7 @@ pyflakes==2.2.0
     # via
     #   flake8
     #   prospector
-pylint==2.10.2
+pylint==2.11.1
     # via
     #   prospector
     #   pylint-celery
@@ -134,7 +134,7 @@ pyyaml==5.4.1
     #   dparse
     #   pre-commit
     #   prospector
-regex==2021.8.28
+regex==2021.9.24
     # via black
 requests==2.26.0
     # via safety
@@ -142,7 +142,7 @@ requirements-detector==0.7
     # via prospector
 safety==1.10.3
     # via -r dev-requirements.in
-setoptconf==0.2.0
+setoptconf-tmp==0.3.1
     # via prospector
 six==1.16.0
     # via
@@ -165,10 +165,14 @@ toml==0.10.2
 tomli==1.2.1
     # via black
 typing-extensions==3.10.0.2
-    # via black
-urllib3==1.26.6
+    # via
+    #   astroid
+    #   black
+    #   gitpython
+    #   pylint
+urllib3==1.26.7
     # via requests
-virtualenv==20.7.2
+virtualenv==20.8.1
     # via pre-commit
 wrapt==1.12.1
     # via astroid
