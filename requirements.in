@@ -19,3 +19,4 @@ ipython
 sentry-sdk
 django-rest-auth
 django-rest-auth[with_social]
+allauth
